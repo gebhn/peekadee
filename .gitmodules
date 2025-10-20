@@ -1,0 +1,3 @@
+[submodule "submodules/EQMacEmu"]
+	path = submodules/EQMacEmu
+	url = https://github.com/SecretsOTheP/EQMacEmu.git
