@@ -1,9 +1,10 @@
-BINDIR := ./bin
-BIN    := peekadee
+BINDIR   := ./bin
+BUILDDIR := ./build
+BIN      := peekadee
 
 GOBIN  := $(shell go env GOPATH)/bin
 GOSRC  := $(shell find . -type f -name '*.go' -print) go.mod go.sum
-SQLSRC := $(shell find . -type f -name '*.sql' -print)
+SQLSRC := $(shell find $(BUILDDIR) -type f -name '*.sql' -print)
 
 GOIMPORTS := $(GOBIN)/goimports
 SQLC      := $(GOBIN)/sqlc

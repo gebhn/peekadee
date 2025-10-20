@@ -3,6 +3,8 @@
 !README
 !LICENSE
 
+!docker-compose.yaml
+
 !.env.example
 
 !.gitignore
@@ -19,6 +21,7 @@
 !build/
 !build/package/
 !build/package/peekadee/
+!build/package/peekadee/sqlc.yaml
 !build/package/peekadee/queries/
 !build/package/peekadee/queries/*
 
