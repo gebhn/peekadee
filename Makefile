@@ -1,16 +1,15 @@
-BINDIR   := ./bin
-BUILDDIR := ./build
-BIN      := peekadee
+BINDIR := ./bin
+SQLDIR := ./build/package/peekadee
+BIN    := peekadee
 
 GOBIN  := $(shell go env GOPATH)/bin
 GOSRC  := $(shell find . -type f -name '*.go' -print) go.mod go.sum
-SQLSRC := $(shell find $(BUILDDIR) -type f -name '*.sql' -print)
+SQLSRC := $(shell find $(SQLDIR) -type f -name '*.sql' -print)
 
 GOIMPORTS := $(GOBIN)/goimports
 SQLC      := $(GOBIN)/sqlc
 MIGRATE   := $(GOBIN)/migrate
 
-SQLDIR := ./build/package/peekadee
 SQLGEN := ./internal/db/sqlc
 
 LDFLAGS := -w -s

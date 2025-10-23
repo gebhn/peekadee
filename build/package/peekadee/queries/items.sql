@@ -1,15 +1,28 @@
--- name: GetNPCsWhichDropsItemByID :many
+-- name: GetDroppedBy :many
 SELECT 
-    npc_types.id,
-    npc_types.name
-FROM npc_types
-LEFT JOIN spawnentry 
-    ON npc_types.id = spawnentry.npcID
-LEFT JOIN spawn2 
-    ON spawnentry.spawngroupID = spawn2.spawngroupID
-LEFT JOIN loottable_entries 
-    ON npc_types.loottable_id = loottable_entries.loottable_id
-LEFT JOIN lootdrop_entries 
-    ON loottable_entries.lootdrop_id = lootdrop_entries.lootdrop_id
-WHERE lootdrop_entries.item_id = ?
-GROUP BY npc_types.id;
+    nt.id, 
+    nt.name, 
+    nt.level, 
+    le.chance, 
+    le.item_charges
+FROM items i
+JOIN lootdrop_entries le ON i.id = le.item_id
+JOIN lootdrop ld ON le.lootdrop_id = ld.id
+JOIN loottable_entries lte ON ld.id = lte.lootdrop_id
+JOIN loottable lt ON lte.loottable_id = lt.id
+JOIN npc_types nt ON lt.id = nt.loottable_id
+WHERE i.name LIKE ?
+ORDER BY le.chance DESC;
+
+-- name: GetSoldBy :many
+SELECT 
+	nt.id,
+	nt.name,
+	nt.level,
+	ml.slot,
+	i.price
+FROM items i
+JOIN merchantlist ml ON i.id = ml.item
+JOIN npc_types nt ON ml.merchantid = nt.merchant_id
+WHERE i.Name LIKE ?
+ORDER BY i.price;
