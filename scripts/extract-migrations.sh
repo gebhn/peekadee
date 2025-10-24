@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_DIR="submodules/EQMacEmu"
 DUMP_DIR="$REPO_DIR/utils/sql/database_full"
-TARGET_DIR="build/package/peekadee/migrations"
+TARGET_DIR="build/package/peekadee/dump"
 
 LATEST=$(find "$DUMP_DIR" -name '*.tar.gz' | sort | tail -n 1)
 
