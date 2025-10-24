@@ -67,3 +67,4 @@ format: $(GOIMPORTS)
 clean:
 	rm -rf $(SQLGEN)
 	rm -rf $(BINDIR)
+	rm -rf $(SQLDIR)/migrations

@@ -14,3 +14,5 @@ fi
 mkdir -p "$TARGET_DIR"
 
 tar -xzf "$LATEST" -C "$TARGET_DIR"
+
+find "$TARGET_DIR" -type f ! -name 'drop_system.sql' ! -name 'quarm*.sql' -delete

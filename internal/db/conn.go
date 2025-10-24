@@ -3,7 +3,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -21,7 +20,7 @@ func NewDB(dsn string) (*sql.DB, error) {
 	db.SetConnMaxIdleTime(5 * time.Minute)
 
 	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("error connectina to database: %w", err)
+		return nil, err
 	}
 
 	return db, nil
