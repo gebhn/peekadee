@@ -1,6 +1,8 @@
 BINDIR := ./bin
 PKGDIR := ./build/package/peekadee
 BIN    := peekadee
+DUMP   := dump
+SCHEMA := schema
 
 GOBIN  := $(shell go env GOPATH)/bin
 GOSRC  := $(shell find . -type f -name '*.go' -print) go.mod go.sum
@@ -31,6 +33,13 @@ $(BINDIR)/$(BIN): $(GOSRC) $(SQLGEN)/.sqlgen
 	go build -trimpath -ldflags '$(LDFLAGS)' -o $(BINDIR)/$(BIN) ./cmd/$(BIN)
 
 # -----------------------------------------------------------------
+#  development
+
+.PHONY: develop
+develop: $(PKGDIR)/$(DUMP)/.extracted
+	docker-compose up -d
+
+# -----------------------------------------------------------------
 #  test
 
 .PHONY: test
@@ -41,32 +50,32 @@ test:
 #  generate
 
 .PHONY: generate
-generate: $(SQLC) $(PKGDIR)/schema/schema.sql $(SQLGEN)/.sqlgen
+generate: $(SQLC) $(PKGDIR)/$(SCHEMA)/schema.sql $(SQLGEN)/.sqlgen
 
-$(PKGDIR)/dump/.extracted:
-	@./scripts/extract-migrations.sh 
-	@touch $(PKGDIR)/dump/.extracted
+.SECONDEXPANSION:
+$(SQLGEN)/.sqlgen: $(PKGDIR)/schema/schema.sql $$(SQLSRC)
+	$(SQLC) -f $(PKGDIR)/sqlc.yaml generate
+	sed -i \
+		's/Casttime\s\+int32\s\+`json:"casttime_"`/Casttime_ int32 `json:"casttime_"`/' \
+		$(SQLGEN)/*.go
+	touch $(SQLGEN)/.sqlgen
 
 $(PKGDIR)/schema/schema.sql: $(PKGDIR)/dump/.extracted
-	@until docker exec mysql mysqladmin ping -u root -p$(DB_PASSWORD) --silent 2>/dev/null; do \
-		sleep 1; \
-	done
-	@mkdir -p $(PKGDIR)/schema
-	@docker exec mysql mysqldump \
+	mkdir -p $(PKGDIR)/$(SCHEMA)
+	docker exec mysql mysqldump \
 	  -u root \
 	  -p$(DB_PASSWORD) \
 	  --no-data \
 	  --skip-triggers \
 	  --skip-add-drop-table \
-	  $(DB_NAME) > $(PKGDIR)/schema/schema.sql
+	  $(DB_NAME) > $(PKGDIR)/$(SCHEMA)/schema.sql
 
-.SECONDEXPANSION:
-$(SQLGEN)/.sqlgen: $(PKGDIR)/schema/schema.sql $$(SQLSRC)
-	$(SQLC) -f $(PKGDIR)/sqlc.yaml generate
-	@sed -i \
-		's/Casttime\s\+int32\s\+`json:"casttime_"`/Casttime_ int32 `json:"casttime_"`/' \
-		$(SQLGEN)/*.go
-	@touch $(SQLGEN)/.sqlgen
+# -----------------------------------------------------------------
+#  extract
+
+$(PKGDIR)/$(DUMP)/.extracted:
+	./scripts/extract-migrations.sh 
+	touch $(PKGDIR)/$(DUMP)/.extracted
 
 # -----------------------------------------------------------------
 #  dependencies
@@ -83,11 +92,11 @@ $(SQLC):
 .PHONY: format
 format: $(GOIMPORTS)
 	GO111MODULE=on go list -f '{{.Dir}}' ./... | \
-				xargs $(GOIMPORTS) -w -local github.com/gebhn/peekadee
+				xargs $(GOIMPORTS) -w -local github.com/gebhn/$(BIN)
 
 .PHONY: clean
 clean:
 	rm -rf $(SQLGEN)
 	rm -rf $(BINDIR)
-	rm -rf $(PKGDIR)/schema
-	rm -rf $(PKGDIR)/dump
+	rm -rf $(PKGDIR)/$(DUMP)
+	rm -rf $(PKGDIR)/$(SCHEMA)

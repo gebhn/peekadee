@@ -35,7 +35,7 @@ build process is very simple:
 |   $ git clone --recurse-submodules git@github.com:gebhn/peekadee.git         |
 |   $ cd peekadee                                                              |
 |                                                                              |
-|   $ make generate                                                            |
+|   $ make develop
 |   $ make                                                                     |
 |                                                                              |
 +------------------------------------------------------------------------------+
@@ -48,7 +48,7 @@ to run these locally via Docker:
 
 +------------------------------------------------------------------------------+
 |                                                                              |
-|   $ docker-compose up -d                                                     |
+|   $ make develop                                                             |
 |                                                                              |
 +------------------------------------------------------------------------------+
 
