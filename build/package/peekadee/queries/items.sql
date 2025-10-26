@@ -1,28 +1,31 @@
--- name: GetDroppedBy :many
+-- name: GetLootTableDrops :many
+-- Get all loot drops for a loot table
 SELECT 
-    nt.id, 
-    nt.name, 
-    nt.level, 
-    le.chance, 
-    le.item_charges
-FROM items i
-JOIN lootdrop_entries le ON i.id = le.item_id
-JOIN lootdrop ld ON le.lootdrop_id = ld.id
-JOIN loottable_entries lte ON ld.id = lte.lootdrop_id
-JOIN loottable lt ON lte.loottable_id = lt.id
-JOIN npc_types nt ON lt.id = nt.loottable_id
-WHERE i.name LIKE ?
-ORDER BY le.chance DESC;
+    ld.id AS lootdrop_id,
+    ld.name AS lootdrop_name,
+    lte.multiplier,
+    lte.probability,
+    lte.droplimit,
+    lte.mindrop
+FROM loottable_entries lte
+JOIN lootdrop ld ON lte.lootdrop_id = ld.id
+WHERE lte.loottable_id = ?
+ORDER BY lte.probability DESC;
 
--- name: GetSoldBy :many
+-- name: GetLootDropItems :many
+-- Get all items in a loot drop
 SELECT 
-	nt.id,
-	nt.name,
-	nt.level,
-	ml.slot,
-	i.price
-FROM items i
-JOIN merchantlist ml ON i.id = ml.item
-JOIN npc_types nt ON ml.merchantid = nt.merchant_id
-WHERE i.Name LIKE ?
-ORDER BY i.price;
+    i.id AS item_id,
+    i.Name AS item_name,
+    le.chance,
+    le.item_charges,
+    le.equip_item,
+    le.minlevel,
+    le.maxlevel,
+    le.multiplier,
+    i.price,
+    i.icon
+FROM lootdrop_entries le
+JOIN items i ON le.item_id = i.id
+WHERE le.lootdrop_id = ?
+ORDER BY le.chance DESC;

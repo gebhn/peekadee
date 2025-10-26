@@ -1,15 +1,22 @@
--- name: GetLoot :many
+-- name: SearchNPCsByName :many
+-- Search NPCs by partial name match
 SELECT 
-    nt.name AS npc_name, 
-    i.name AS item_name, 
-    le.chance, 
-    le.item_charges, 
-    i.price
+    id,
+    name,
+    level,
+    race,
+    class,
+    hp,
+    mindmg,
+    maxdmg
+FROM npc_types
+WHERE name LIKE ?
+ORDER BY name;
+
+-- name: GetNPCLootTable :one
+-- Get loot table info for an NPC
+SELECT 
+    lt.id as loottable_id
 FROM npc_types nt
 JOIN loottable lt ON nt.loottable_id = lt.id
-JOIN loottable_entries lte ON lt.id = lte.loottable_id
-JOIN lootdrop ld ON lte.lootdrop_id = ld.id
-JOIN lootdrop_entries le ON ld.id = le.lootdrop_id
-JOIN items i ON le.item_id = i.id
-WHERE nt.name LIKE ?
-ORDER BY le.chance DESC;
+WHERE nt.id = ?;

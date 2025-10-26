@@ -3,14 +3,14 @@ services:
     image: mysql:latest
     container_name: mysql
     restart: always
-    command: --max_allowed_packet=128M --sql-mode="NO_ENGINE_SUBSTITUTION"
+    command: --sql-mode="NO_ENGINE_SUBSTITUTION"
     environment:
       MYSQL_ROOT_PASSWORD: "password"
       MYSQL_DATABASE: "database"
     ports:
       - "3306:3306"
     volumes:
-      - ./build/package/peekadee/migrations:/docker-entrypoint-initdb.d
+      - ./build/package/peekadee/dump:/docker-entrypoint-initdb.d
 
   redis:
     image: redis:latest
