@@ -10,7 +10,6 @@ SQLSRC := $(shell find $(PKGDIR) -type f -name '*.sql' -print)
 
 GOIMPORTS := $(GOBIN)/goimports
 SQLC      := $(GOBIN)/sqlc
-MIGRATE   := $(GOBIN)/migrate
 
 SQLGEN := ./internal/db/sqlc
 

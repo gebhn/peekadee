@@ -35,8 +35,9 @@ build process is very simple:
 |   $ git clone --recurse-submodules git@github.com:gebhn/peekadee.git         |
 |   $ cd peekadee                                                              |
 |                                                                              |
-|   $ make develop
-|   $ make                                                                     |
+|   $ make develop   # Run docker containers                                   |
+|   $ make generate  # Generate schema/sqlc codegen                            |
+|   $ make           # Build                                                   |
 |                                                                              |
 +------------------------------------------------------------------------------+
 
